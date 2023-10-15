@@ -23,6 +23,11 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.Logo {
+  display:flex;
+  animation: 0;
+
+}
 
 .App-link {
   color: #61dafb;
