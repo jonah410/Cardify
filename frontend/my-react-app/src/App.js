@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import new_logo from './notecard.png'
 import './App.css';
 import Converter from "./components/converter.js";
+import Flashcard from "./components/flashcard.js";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       </div>
       <header className="App-header">
         <Converter />
+        <Flashcard />
       </header>
     </div>
   );
