@@ -34,12 +34,40 @@ def home():
                 pdf_path = os.path.join(upload_dir, pdf_filename)
                 pdf_file.save(pdf_path)
 
-                # Implement PDF processing logic here:
-
-                # Redirect to the flashcard listing page
-                return redirect(url_for('flashcard_listing'))
+                # Redirect to the pdf processing page
+                return redirect(url_for('upload'))
 
     return render_template('home.html', title='Home Page')
+
+
+@app.route('/upload', methods=['POST'])
+def upload_pdf():
+    pdf_file = request.files['pdf_file']
+
+    if pdf_file:
+        try:
+            # Save the uploaded PDF to a directory
+            pdf_file.save('path_to_upload_directory/' + pdf_file.filename)
+
+            # Implement Jonah's OpenAI API call here
+
+            # Create a flashcard and store it in the database
+            new_flashcard = Flashcard(
+                question='Your question here',
+                answer='Your answer here'
+            )
+            db.session.add(new_flashcard)
+            db.session.commit()
+
+            # Return a success response
+            return jsonify({'message': 'PDF uploaded successfully', 'filename': pdf_file.filename})
+        except Exception as e:
+            # Handle any errors that may occur during the file saving process
+            return jsonify({'error': str(e)}), 500
+    else:
+        # Handle the case where no file was uploaded
+        return jsonify({'message': 'No file uploaded'}), 400
+    
     
 # Route for the flashcard listing page
 @app.route('/flashcards', methods=['GET'])
