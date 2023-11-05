@@ -76,5 +76,18 @@ def flashcard_listing():
     flashcards = Flashcard.query.all()
     return render_template('flashcard_listing.html', title='Flashcards', flashcards=flashcards)
 
+# Route for editing flashcards page
+@app.route('/edit_flashcard/<int:flashcard_id>', methods=['GET', 'POST'])
+def edit_flashcard(flashcard_id):
+    flashcard = Flashcard.query.get(flashcard_id)
+
+    if request.method == 'POST':
+        flashcard.question = request.form['question']
+        flashcard.answer = request.form['answer']
+        db.session.commit()
+        return redirect(url_for('flashcard_listing'))
+
+    return render_template('edit_flashcard.html', flashcard=flashcard)
+
 if __name__ == '__main__':
     app.run(debug=True)
