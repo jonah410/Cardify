@@ -19,26 +19,26 @@ def extract_text_from_pdf(pdf_path):
             text += reader.pages[page_num].extract_text()
     return text
 
-def parse_text(response):
-    # Split the input string into entries based on newline character
-    entries = response.strip().split('\n')
+def parse_text(response): # IF THIS RETURNS AN EMPTY ARRAY, REGENERATE THE RESPONSE AND RUN IT AGAIN
+    # Split the input string into entries based on "Front:" and "Back:"
+    front_entries = re.split(r'Front: ', response.strip())
     result = []
     
-    for text in entries:
-        # Split the text based on ":"
-        split_text = re.split(r' : ', text)
-        # Filter out empty strings and unwanted parts
-        split_text = [item for item in split_text if (item) and not item.endswith('.')]
-        
-        # Check if the length is as expected (should be 2 after splitting)
-        if len(split_text) == 2:
-            result.append(split_text)
+    for entry in front_entries[1:]:  # Skip the first split as it will be empty
+        # Further split each entry into front and back using "Back:"
+        parts = re.split(r'Back: ', entry)
+        if len(parts) == 2:
+            front = parts[0].strip()
+            back = parts[1].strip()
+            # Ensure we do not include the number in the front text
+            front = re.sub(r'^\d+\.\s*', '', front)
+            result.append([front, back])
         else:
-            print("Error in parsing: ", text)
+            print("Error in parsing: ", entry)
             
-    # Transpose the result to get the required 2xn array
-    transposed_result = [list(x) for x in zip(*result)]
-    return transposed_result
+    return result
+
+
 
 # Path to your PDF file
 pdf_path = "/Users/jonahblack/Downloads/08_22 - lecture 1 notes.pdf"
@@ -46,7 +46,7 @@ pdf_path = "/Users/jonahblack/Downloads/08_22 - lecture 1 notes.pdf"
 # Extract text from the PDF
 notes = extract_text_from_pdf(pdf_path)
 
-query = "Parse the following text and output relevant information in flashcard format: 1) [front], 2) [back]: " + notes # for example, if the input is [input], you should output [desired output]
+query = "Parse the following text and output relevant information in flashcard format: 1: [front], 2: [back] " + notes # for example, if the input is [input], you should output [desired output]
 
 # streamed completion
 response = g4f.ChatCompletion.create(
@@ -55,25 +55,19 @@ response = g4f.ChatCompletion.create(
     stream=True,
 )
 
-for message in response:
-    print(message, flush=True, end='')
+complete_message = ''
+# Stream through the response and concatenate the characters
+for char in response:
+    if isinstance(char, str):  # Check if the response item is a string
+        complete_message += char
+    
+print(complete_message)
+parsed_data = parse_text(complete_message) # to implement: if parsed_data.size() == 0, rerun  the query (until it generates with the thing we want to split on)
+print(parsed_data)
 
-print(response)
+# next step: return the response as a string (put top and bottom into a 2xn array) - DONE, parse the response - DONE, set the text into the appropriate parameter for the flashcard datatype
 
-# something is wrong here - what else is needed to parse the stream?
-'''response_content = ''
-for message in response:
-    if 'content' in message['data']:
-        response_content += message['data']['content']
-
-arr = parse_text(response_content)
-print(arr)'''
-
-
-
-# next step: return the response as a string (put top and bottom into a 2xn array), parse the response, set the text into the appropriate parameter for the flashcard datatype
-
-# maybe use check for a valid response as well 
+# maybe use this check for a valid response as well 
 ''' if response.status_code == 200:
     result = response.text
     print(result)
@@ -82,10 +76,3 @@ print(arr)'''
 
 else:
     print(f"Error: {response.status_code} - {response.text}") '''
-
-# diff this with the current response structure
-''' # normal response
-response = g4f.ChatCompletion.create(
-    model=g4f.models.gpt_4,
-    messages=[{"role": "user", "content": "Hello"}],
-)  # alternative model setting '''
