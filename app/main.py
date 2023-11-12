@@ -38,6 +38,19 @@ def parse_text(response): # IF THIS RETURNS AN EMPTY ARRAY, REGENERATE THE RESPO
             
     return result
 
+def generate_response(query):
+    response = g4f.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": query}],
+        stream=True,
+    )
+
+    complete_message = ''
+    for char in response:
+        if isinstance(char, str):  # Check if the response item is a string
+            complete_message += char
+
+    return complete_message
 
 
 # Path to your PDF file
@@ -48,22 +61,23 @@ notes = extract_text_from_pdf(pdf_path)
 
 query = "Parse the following text and output relevant information in flashcard format: 1: [front], 2: [back] " + notes # for example, if the input is [input], you should output [desired output]
 
-# streamed completion
-response = g4f.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[{"role": "user", "content": query}],
-    stream=True,
-)
+max_attempts = 5  # Set a maximum number of attempts to avoid infinite looping
+attempt = 0
+parsed_data = []
 
-complete_message = ''
-# Stream through the response and concatenate the characters
-for char in response:
-    if isinstance(char, str):  # Check if the response item is a string
-        complete_message += char
+while len(parsed_data) == 0 and attempt < max_attempts:
+    complete_message = generate_response(query)
+    parsed_data = parse_text(complete_message)
+    attempt += 1
+
+if len(parsed_data) == 0:
+    print("Failed to generate valid data after multiple attempts.")
+else:
+    print(parsed_data)
     
-print(complete_message)
-parsed_data = parse_text(complete_message) # to implement: if parsed_data.size() == 0, rerun  the query (until it generates with the thing we want to split on)
-print(parsed_data)
+# print(complete_message)
+# parsed_data = parse_text(complete_message) # to implement: if parsed_data.size() == 0, rerun  the query (until it generates with the thing we want to split on)
+# print(parsed_data)
 
 # next step: return the response as a string (put top and bottom into a 2xn array) - DONE, parse the response - DONE, set the text into the appropriate parameter for the flashcard datatype
 
