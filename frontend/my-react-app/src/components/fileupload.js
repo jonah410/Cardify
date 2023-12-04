@@ -1,28 +1,14 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-const FileUpload = () => {
+const FileUpload = ({ onFileUpload }) => {
   const [uploadedFileName, setUploadedFileName] = useState(null);
 
   const onDrop = (acceptedFiles) => {
-    // Handle the uploaded files here
     console.log(acceptedFiles);
-    // Assume the upload was successful for demonstration purposes
-    const uploadedFile = acceptedFiles[0]; // Assuming only one file is uploaded
+    const uploadedFile = acceptedFiles[0]; // single file uploaded
     setUploadedFileName(uploadedFile.name);
-    const formData = new FormData();
-    formData.append('file', uploadedFile);
-    fetch('http://your-backend-api/upload', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data); // Handle the response from the backend
-    })
-    .catch(error => {
-      console.error(error); // Handle errors
-    });
+    onFileUpload(uploadedFile);
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });

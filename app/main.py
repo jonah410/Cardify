@@ -1,3 +1,4 @@
+from flask import Flask, request, jsonify
 import g4f
 # from g4f.api import run_api
 import PyPDF2

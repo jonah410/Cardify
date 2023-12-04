@@ -1,21 +1,21 @@
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import Flashcard from "./components/flashcard.js";
-import './App.css';
-import new_logo from './notecard.png'
-
 
 function CardPage() {
+  const location = useLocation();
+  const flashcards = location.state?.flashcards || []; // Get flashcards from route state
+  console.log('Flashcards:', flashcards); // Check the flashcards data
+
+
   return (
     <div className="App">
         <h1>Your Flashcards:</h1>
-      {/* <div className = "Logo">
-      <img src={new_logo} className="App-logo" alt="logo" />
-      </div> */}
-      <header className="Card-page-header">
-            <Flashcard />
-            <Flashcard />
-            <Flashcard />
-            <Flashcard />
-      </header>
+        <header className="Card-page-header">
+          {flashcards.map((card, index) => (
+            <Flashcard key={index} front={card[0]} back={card[1]} />
+          ))}
+        </header>
     </div>
   );
 }

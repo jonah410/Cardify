@@ -1,5 +1,5 @@
-import '../App.css';
-import ReactFlipCard from 'reactjs-flip-card'
+import React from 'react';
+import ReactFlipCard from 'reactjs-flip-card';
 
 const styles = {
     card: {
@@ -9,26 +9,25 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        // height: '100%',
-        // width: '100%'
     },
     allcard: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     }
 };
 
-const flashcard = () => {
+const Flashcard = ({ front, back }) => {
     return (
         <div style={{height:'200px', width: '30%'}}>
-                <ReactFlipCard
-                    containerStyle={styles.allcard}
-                    frontStyle={styles.card}
-                    backStyle={styles.card}
-                    frontComponent={<div>Word/ Big Idea/ Frontside</div>}
-                    backComponent={<div>Definition/ Significance/ Backside</div>}
-                />
+            <ReactFlipCard
+                containerStyle={styles.allcard}
+                frontStyle={styles.card}
+                backStyle={styles.card}
+                frontComponent={<div>{front}</div>}
+                backComponent={<div>{back}</div>}
+            />
         </div>
-    )
-}
-export default flashcard;
+    );
+};
+
+export default Flashcard;
