@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import g4f
 # from g4f.api import run_api
 import PyPDF2
 import re
 
 app = Flask(__name__)
+CORS(app)
+
 
 g4f.logging = True # enable logging
 g4f.check_version = False # Disable automatic version checking
