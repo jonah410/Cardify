@@ -10,8 +10,6 @@ g4f.check_version = False # Disable automatic version checking
 print(g4f.version) # check version
 print(g4f.Provider.Ails.params)  # supported args
 
-# Automatic selection of provider
-
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, 'rb') as file:
         reader = PyPDF2.PdfReader(file)
