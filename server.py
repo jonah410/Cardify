@@ -14,7 +14,6 @@ g4f.check_version = False # Disable automatic version checking
 print(g4f.version) # check version
 print(g4f.Provider.Ails.params)  # supported args
 
-# Automatic selection of provider
 
 def extract_text_from_pdf(file_stream):
     reader = PyPDF2.PdfReader(file_stream)
@@ -51,7 +50,7 @@ def generate_response(query):
 
     complete_message = ''
     for char in response:
-        if isinstance(char, str):  # Check if the response item is a string
+        if isinstance(char, str):
             complete_message += char
 
     return complete_message
@@ -65,7 +64,7 @@ def upload_file():
     if uploaded_file.filename != '':
         text = extract_text_from_pdf(uploaded_file.stream)  # Use the stream directly
         query = "Parse the following text and output relevant information in flashcard format: 1: [front], 2: [back] " + text
-        max_attempts = 5  # Set a maximum number of attempts to avoid infinite looping
+        max_attempts = 5
         attempt = 0
         parsed_data = []
 
