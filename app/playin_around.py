@@ -24,7 +24,6 @@ from g4f.Provider import (
     Yqcloud,
 )
 
-# API endpoint (this is hypothetical and may vary based on actual API details)
 API_ENDPOINT = "http://127.0.0.1:80"
 API_TOKEN = "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" # hugging face api read token
 
@@ -36,10 +35,7 @@ def extract_text_from_pdf(pdf_path):
             text += reader.pages[page_num].extract_text()
     return text
 
-# Path to your PDF file
 pdf_path = "/Users/jonahblack/Downloads/Sample_Cover_Letter.pdf"
-
-# Extract text from the PDF
 notes = extract_text_from_pdf(pdf_path)
 
 '''response = g4f.Completion.create(
@@ -56,8 +52,6 @@ response = g4f.ChatCompletion.create(
 print(response)
 
 # response = requests.post(API_ENDPOINT, json=data, headers=headers)
-
-# Check for a valid response
 if response.status_code == 200:
     result = response.text
     print(result)
